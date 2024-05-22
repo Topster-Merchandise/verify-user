@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">  
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <title>Verify User</title>
+</head>
+
+<body>
+  <div id="loading-spinner" class="absolute bg-white bg-opacity-60 z-10 h-full w-full flex items-center justify-center">
+    <div class="flex items-center">
+      <div class="relative flex justify-center items-center">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaDR3NHJlcnMxYnF3aW53c3I0djA1YWg5YXlneTloOGc1bnFjdXR5biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/y1ZBcOGOOtlpC/giphy.gif" class="rounded-full"/>
+      </div>
+    </div>
+  </div>
+
+  <p id="verify-status" style="display: none; color: red; font-size: 20px; font-weight: bold">User Status : <span id="id-Verify-User-Status"></span></p>
+
+<script>
+  window.onload = function () {
+  liff.init({liffId: "1661043437-LyEK5vNX",
+  withLoginOnExternalBrowser: true,
+  },
+    function () {liff.ready.then(() => {
+    if (liff.isLoggedIn()) {
+    liff.getProfile().then((profile) => {
+    // console.log("User Data : " + JSON.stringify(profile, null, 2));
+    
+    verifyUser(profile.userId).then((result) => {
+    // console.log("User Status : " + result)
+    
+    if (result === true) {
+    // document.getElementById("loading-spinner").style.display = "none";
+    // document.getElementById("verify-status").style.display = "block";
+    // document.getElementById("id-Verify-User-Status").innerText = "Authorized access !";
+    const urlProductImage = `https://phitsanu-duangpiboon.github.io/House-Brands/?userId=${profile.userId}`
+    // console.log("urlProductImage : " + urlProductImage)
+    window.location.replace(urlProductImage);
+    } else {
+    document.getElementById("loading-spinner").style.display = "none";
+    document.getElementById("verify-status").style.display = "block";
+    document.getElementById("id-Verify-User-Status").innerText = "Not authorized access !";
+    setTimeout(function () {
+    liff.closeWindow();
+    }, 3000); // 3000 มิลลิวินาที คือ 3 วินาที
+    }
+    })
+    .catch((error) => {
+    console.error("Error:", error);
+    });
+    });
+    } else {
+    liff.login();
+    }
+    });
+    });
+  }
+  function verifyUser(userID) {
+  // ส่งคืน Promise เพื่อรอการดำเนินการต่อ
+  return new Promise((resolve, reject) => {
+  fetch("https://sheets.googleapis.com/v4/spreadsheets/1f_NuqpChx19oKfWEF_ovhChNYGvVJ-wQs31_XQ3LPy0/values/User_Control?alt=json&key=AIzaSyAdCM70gzmQSf6CJATJzJGZTuCbI7AwA3E")
+  .then((response) => response.json())
+  .then((data) => {
+  let values = data.values;
+  let userID_Arr = [];
+  let userPermissions_Arr = [];
+
+  // สร้าง userID_Arr และ User Permissions_Arr
+  for (let i = 1; i < values.length; i++) {
+  userID_Arr.push(values[i][1]);
+  userPermissions_Arr.push(values[i][9]);
+  }
+  // console.log(userID_Arr)
+
+  // ตรวจสอบว่า userID ที่เข้ามามีใน userID_Arr และ User Permissions เป็น "Access" หรือไม่
+  let userIndex = userID_Arr.indexOf(userID);
+  if (userIndex !== -1 && userPermissions_Arr[userIndex] === "Access") {
+  resolve(true); // ส่งค่าเป็น true ผ่าน resolve
+  } else {
+  resolve(false); // ส่งค่าเป็น false ผ่าน resolve
+  }
+  })
+  .catch((error) => {
+  console.error("Error fetching data:", error); // แสดงข้อผิดพลาดที่เกิดขึ้น
+  reject(error); // ส่ง error ผ่าน reject กรณีเกิดข้อผิดพลาด
+  });
+  });
+}
+</script>  
+</body>
+</html>

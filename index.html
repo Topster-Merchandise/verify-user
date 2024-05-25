@@ -9,19 +9,17 @@
 </head>
 
 <body>
-  <div id="loading-spinner" class="absolute bg-white bg-opacity-60 z-10 h-full w-full flex items-center justify-center">
+  <div id="loading-spinner" class="absolute bg-opacity-100 z-10 h-full w-full flex items-center justify-center">
     <div class="flex items-center">
       <div class="relative flex justify-center items-center">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaDR3NHJlcnMxYnF3aW53c3I0djA1YWg5YXlneTloOGc1bnFjdXR5biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/y1ZBcOGOOtlpC/giphy.gif" class="rounded-full"/>
+        <img src="https://lh5.googleusercontent.com/d/1zq1TVKLVWjwC5asXlNaIh5UUadMj3zvz"/>
       </div>
     </div>
   </div>
 
-  <p id="verify-status" style="display: none; color: red; font-size: 20px; font-weight: bold">User Status : <span id="id-Verify-User-Status"></span></p>
-
 <script>
   window.onload = function () {
-  liff.init({liffId: "1661043437-On85yAKd",
+  liff.init({liffId: "1661043437-Vx42y7aK",
   withLoginOnExternalBrowser: true,
   },
     function () {liff.ready.then(() => {
@@ -29,20 +27,46 @@
     liff.getProfile().then((profile) => {
     // console.log("User Data : " + JSON.stringify(profile, null, 2));
     
+    // ตรวจสอบ USER
     verifyUser(profile.userId).then((result) => {
     // console.log("User Status : " + result)
     
     if (result === true) {
+      
+      document.title = "User is verified";
+      
+      // Verified Image
+      document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
+      
+      // ดึงค่า query string จาก URL ปัจจุบัน
+      const urlParams = new URLSearchParams(window.location.search);
+      // console.log("urlParams : " + urlParams)
+      const request = urlParams.get('request');
+      // console.log("request : " + request)
+      
+      // เช็คว่าถูกเรียกจากเรื่องอะไร เพื่อส่งต่อ URL
+      if (request === "ProductImageUpload") {
+        const urlRedirect = `https://tops-house-brands.github.io/product-image-upload/?userId=${profile.userId}`
+        // console.log("urlRedirect : " + urlRedirect)
+        setTimeout(function () {
+        window.location.replace(urlRedirect); 
+        }, 1000);
+      } else if (request === "HouseBrandsProduct") {
+        const urlRedirect = `https://bit.ly/TopsHouseBrands`
+        // console.log("urlRedirect : " + urlRedirect)
+        log(profile);
+        setTimeout(function () {
+        window.location.replace(urlRedirect); 
+        }, 1000);
+      }
+      
+    } else {
+    // not authorized access Image
+    document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zoHmtjKLxB8EpfPb708f-eUHEDyg8g1T";
     // document.getElementById("loading-spinner").style.display = "none";
     // document.getElementById("verify-status").style.display = "block";
-    // document.getElementById("id-Verify-User-Status").innerText = "Authorized access !";
-    const urlProductImage = `https://tops-house-brands.github.io/product-image-upload/?userId=${profile.userId}`
-    // console.log("urlProductImage : " + urlProductImage)
-    window.location.replace(urlProductImage);
-    } else {
-    document.getElementById("loading-spinner").style.display = "none";
-    document.getElementById("verify-status").style.display = "block";
-    document.getElementById("id-Verify-User-Status").innerText = "Not authorized access !";
+    // document.getElementById("id-Verify-User-Status").innerText = "Not authorized access !";
+      
     setTimeout(function () {
     liff.closeWindow();
     }, 3000); // 3000 มิลลิวินาที คือ 3 วินาที
@@ -73,7 +97,7 @@
   userID_Arr.push(values[i][1]);
   userPermissions_Arr.push(values[i][9]);
   }
-  // console.log(userID_Arr)
+  // console.log("userID_Arr : " + userID_Arr)
 
   // ตรวจสอบว่า userID ที่เข้ามามีใน userID_Arr และ User Permissions เป็น "Access" หรือไม่
   let userIndex = userID_Arr.indexOf(userID);
@@ -87,6 +111,29 @@
   console.error("Error fetching data:", error); // แสดงข้อผิดพลาดที่เกิดขึ้น
   reject(error); // ส่ง error ผ่าน reject กรณีเกิดข้อผิดพลาด
   });
+  });
+}
+function log(profile) {
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbytUdQQ9Iu1MWJcHyDahuBisX7pMJB4sCrL3FwhbzISYzDMffOZlXu5CYoD3O3SbQOK/exec';
+  const date = new Date();
+  const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+
+  const obj = {
+  date: formattedDate,
+  userId: profile.userId,
+  profileName: profile.displayName,
+  userPermissions: "Access",
+  action: "House Brands Product : Click"
+  };
+  // console.log("obj : " + JSON.stringify(obj, null, 2));
+
+  fetch(scriptURL, { method: 'POST', body: JSON.stringify(obj) })
+  .then((response) => response.json())
+  .then((data) => {
+  console.log("Success:", data);
+  })
+  .catch((error) => {
+  console.error("Error:", error);
   });
 }
 </script>  

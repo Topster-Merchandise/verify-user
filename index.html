@@ -19,69 +19,67 @@
 
 <script>
   window.onload = function () {
-  liff.init({liffId: "1661043437-Vx42y7aK",
-  withLoginOnExternalBrowser: true,
-  },
-    function () {liff.ready.then(() => {
-    if (liff.isLoggedIn()) {
-    liff.getProfile().then((profile) => {
-    // console.log("User Data : " + JSON.stringify(profile, null, 2));
-    
-    // ตรวจสอบ USER
-    verifyUser(profile.userId).then((result) => {
-    // console.log("User Status : " + result)
-    
-    if (result === true) {
-      
-      document.title = "User is verified";
-      
-      // Verified Image
-      document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
-      
-      // ดึงค่า query string จาก URL ปัจจุบัน
-      const urlParams = new URLSearchParams(window.location.search);
-      // console.log("urlParams : " + urlParams)
-      const request = urlParams.get('request');
-      // console.log("request : " + request)
-      
-      // เช็คว่าถูกเรียกจากเรื่องอะไร เพื่อส่งต่อ URL
-      if (request === "ProductImageUpload") {
-        const urlRedirect = `https://tops-house-brands.github.io/product-image-upload/?userId=${profile.userId}`
-        // console.log("urlRedirect : " + urlRedirect)
-        setTimeout(function () {
-        window.location.replace(urlRedirect); 
-        }, 1000);
-      } else if (request === "HouseBrandsProduct") {
-        const urlRedirect = `https://bit.ly/TopsHouseBrands`
-        // console.log("urlRedirect : " + urlRedirect)
-        log(profile);
-        setTimeout(function () {
-        window.location.replace(urlRedirect); 
-        }, 1000);
-      }
-      
-    } else {
-    // not authorized access Image
-    document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zoHmtjKLxB8EpfPb708f-eUHEDyg8g1T";
-    // document.getElementById("loading-spinner").style.display = "none";
-    // document.getElementById("verify-status").style.display = "block";
-    // document.getElementById("id-Verify-User-Status").innerText = "Not authorized access !";
-      
-    setTimeout(function () {
-    liff.closeWindow();
-    }, 3000); // 3000 มิลลิวินาที คือ 3 วินาที
-    }
-    })
-    .catch((error) => {
-    console.error("Error:", error);
-    });
-    });
-    } else {
-    liff.login();
-    }
-    });
-    });
+  const currentUrl = window.location.href;
+  liff.init({ liffId: "1661043437-Vx42y7aK", 
+  withLoginOnExternalBrowser: true }).then(() => {
+  if (!liff.isLoggedIn()) {
+  liff.login();
+  liff.ready.then(() => {
+  if (liff.isLoggedIn()) {
+  window.location.replace(currentUrl);
+    main();
   }
+  });
+  } else {
+    main();
+  }
+  }).catch((error) => {
+  console.error("Error initializing LIFF:", error);
+  });
+
+  function main() {
+  liff.getProfile().then((profile) => {
+  // ตรวจสอบ USER
+  verifyUser(profile.userId).then((result) => {
+  if (result === true) {
+  document.title = "User is verified";
+
+  // Verified Image
+  document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
+
+  // ดึงค่า query string จาก URL ปัจจุบัน
+  const urlParams = new URLSearchParams(window.location.search);
+  const request = urlParams.get('request');
+
+  // เช็คว่าถูกเรียกจากเรื่องอะไร เพื่อส่งต่อ URL
+  if (request === "ProductImageUpload") {
+  const urlRedirect = `https://tops-house-brands.github.io/product-image-upload/?userId=${profile.userId}`;
+  setTimeout(function () {
+  window.location.replace(urlRedirect);
+  }, 1000);
+  } else if (request === "HouseBrandsProduct") {
+  const urlRedirect = `https://bit.ly/TopsHouseBrands`;
+  log(profile);
+  setTimeout(function () {
+  window.location.replace(urlRedirect);
+  }, 1000);
+  }
+
+  } else {
+  // not authorized access Image
+  document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zoHmtjKLxB8EpfPb708f-eUHEDyg8g1T";
+
+  setTimeout(function () {
+  liff.closeWindow();
+  }, 3000); // 3000 มิลลิวินาที คือ 3 วินาที
+  }
+  }).catch((error) => {
+  console.error("Error:", error);
+  });
+  });
+  }
+  }
+
   function verifyUser(userID) {
   // ส่งคืน Promise เพื่อรอการดำเนินการต่อ
   return new Promise((resolve, reject) => {

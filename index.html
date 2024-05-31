@@ -19,14 +19,14 @@
 
 <script>
   window.onload = function () {
-  const currentUrl = window.location.href;
+  // const currentUrl = window.location.href;
   liff.init({ liffId: "1661043437-Vx42y7aK", 
   withLoginOnExternalBrowser: true }).then(() => {
   if (!liff.isLoggedIn()) {
-  liff.login();
+  liff.login({ redirectUri: window.location.href });
   liff.ready.then(() => {
   if (liff.isLoggedIn()) {
-  window.location.replace(currentUrl);
+  // window.location.replace(currentUrl);
     main();
   }
   });

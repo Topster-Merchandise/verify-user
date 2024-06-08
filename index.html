@@ -9,6 +9,7 @@
 </head>
 
 <body>
+  
   <div id="loading-spinner" class="absolute bg-opacity-100 z-10 h-full w-full flex items-center justify-center">
     <div class="flex items-center">
       <div class="relative flex justify-center items-center">
@@ -18,36 +19,26 @@
   </div>
 
 <script>
-  window.onload = function () {
-  // const currentUrl = window.location.href;
-  liff.init({ liffId: "1661043437-Vx42y7aK", 
-  withLoginOnExternalBrowser: true }).then(() => {
-  if (!liff.isLoggedIn()) {
-  liff.login({ redirectUri: window.location.href });
-  liff.ready.then(() => {
-  if (liff.isLoggedIn()) {
-  // window.location.replace(currentUrl);
-    main();
-  }
-  });
-  } else {
-    main();
-  }
-  }).catch((error) => {
-  console.error("Error initializing LIFF:", error);
-  });
 
-  function main() {
+  async function main() {
+  await liff.init({ liffId: '1661043437-Vx42y7aK' });
+
+  // liff.logout()
+
+  if (!liff.isLoggedIn()) {
+  const destinationUrl = window.location.href;
+  liff.login({ redirectUri: destinationUrl });
+  }
+  
   liff.getProfile().then((profile) => {
-  // ตรวจสอบ USER
   verifyUser(profile.userId).then((result) => {
   if (result === true) {
   document.title = "User is verified";
-
+    
   // Verified Image
   document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
-
-  // ดึงค่า query string จาก URL ปัจจุบัน
+  
+    // ดึงค่า query string จาก URL ปัจจุบัน
   const urlParams = new URLSearchParams(window.location.search);
   const request = urlParams.get('request');
 
@@ -78,62 +69,65 @@
   });
   });
   }
-  }
-
+  
   function verifyUser(userID) {
-  // ส่งคืน Promise เพื่อรอการดำเนินการต่อ
-  return new Promise((resolve, reject) => {
-  fetch("https://sheets.googleapis.com/v4/spreadsheets/183XC8CZd_3y2N-q0ZlDI7OpLPy8HSzIjikrBj0t6Zls/values/User_Control?alt=json&key=AIzaSyAdCM70gzmQSf6CJATJzJGZTuCbI7AwA3E")
-  .then((response) => response.json())
-  .then((data) => {
-  let values = data.values;
-  let userID_Arr = [];
-  let userPermissions_Arr = [];
+    // ส่งคืน Promise เพื่อรอการดำเนินการต่อ
+    return new Promise((resolve, reject) => {
+    fetch("https://sheets.googleapis.com/v4/spreadsheets/183XC8CZd_3y2N-q0ZlDI7OpLPy8HSzIjikrBj0t6Zls/values/User_Control?alt=json&key=AIzaSyAdCM70gzmQSf6CJATJzJGZTuCbI7AwA3E")
+    .then((response) => response.json())
+    .then((data) => {
+    let values = data.values;
+    let userID_Arr = [];
+    let userPermissions_Arr = [];
 
-  // สร้าง userID_Arr และ User Permissions_Arr
-  for (let i = 1; i < values.length; i++) {
-  userID_Arr.push(values[i][1]);
-  userPermissions_Arr.push(values[i][9]);
+    // สร้าง userID_Arr และ User Permissions_Arr
+    for (let i = 1; i < values.length; i++) {
+    userID_Arr.push(values[i][1]);
+    userPermissions_Arr.push(values[i][9]);
+    }
+    // console.log("userID_Arr : " + userID_Arr)
+
+    // ตรวจสอบว่า userID ที่เข้ามามีใน userID_Arr และ User Permissions เป็น "Access" หรือไม่
+    let userIndex = userID_Arr.indexOf(userID);
+    if (userIndex !== -1 && userPermissions_Arr[userIndex] === "Access") {
+    resolve(true); // ส่งค่าเป็น true ผ่าน resolve
+    } else {
+    resolve(false); // ส่งค่าเป็น false ผ่าน resolve
+    }
+    })
+    .catch((error) => {
+    console.error("Error fetching data:", error); // แสดงข้อผิดพลาดที่เกิดขึ้น
+    reject(error); // ส่ง error ผ่าน reject กรณีเกิดข้อผิดพลาด
+    });
+    });
   }
-  // console.log("userID_Arr : " + userID_Arr)
 
-  // ตรวจสอบว่า userID ที่เข้ามามีใน userID_Arr และ User Permissions เป็น "Access" หรือไม่
-  let userIndex = userID_Arr.indexOf(userID);
-  if (userIndex !== -1 && userPermissions_Arr[userIndex] === "Access") {
-  resolve(true); // ส่งค่าเป็น true ผ่าน resolve
-  } else {
-  resolve(false); // ส่งค่าเป็น false ผ่าน resolve
+  function log(profile) {
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbytUdQQ9Iu1MWJcHyDahuBisX7pMJB4sCrL3FwhbzISYzDMffOZlXu5CYoD3O3SbQOK/exec';
+    const date = new Date();
+    const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+
+    const obj = {
+    date: formattedDate,
+    userId: profile.userId,
+    profileName: profile.displayName,
+    userPermissions: "Access",
+    action: "House Brands Product : Click"
+    };
+    // console.log("obj : " + JSON.stringify(obj, null, 2));
+
+    fetch(scriptURL, { method: 'POST', body: JSON.stringify(obj) })
+    .then((response) => response.json())
+    .then((data) => {
+    console.log("Success:", data);
+    })
+    .catch((error) => {
+    console.error("Error:", error);
+    });
   }
-  })
-  .catch((error) => {
-  console.error("Error fetching data:", error); // แสดงข้อผิดพลาดที่เกิดขึ้น
-  reject(error); // ส่ง error ผ่าน reject กรณีเกิดข้อผิดพลาด
-  });
-  });
-}
-function log(profile) {
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbytUdQQ9Iu1MWJcHyDahuBisX7pMJB4sCrL3FwhbzISYzDMffOZlXu5CYoD3O3SbQOK/exec';
-  const date = new Date();
-  const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
 
-  const obj = {
-  date: formattedDate,
-  userId: profile.userId,
-  profileName: profile.displayName,
-  userPermissions: "Access",
-  action: "House Brands Product : Click"
-  };
-  // console.log("obj : " + JSON.stringify(obj, null, 2));
+  main();
 
-  fetch(scriptURL, { method: 'POST', body: JSON.stringify(obj) })
-  .then((response) => response.json())
-  .then((data) => {
-  console.log("Success:", data);
-  })
-  .catch((error) => {
-  console.error("Error:", error);
-  });
-}
-</script>  
+</script>
 </body>
 </html>

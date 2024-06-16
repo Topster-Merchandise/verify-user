@@ -36,7 +36,10 @@
   document.title = "User is verified";
     
   // Verified Image
-  document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
+  // document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
+  var img = document.getElementById("loading-spinner").querySelector("img");
+  img.src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
+  img.classList.remove("w-48", "h-48");
   
     // ดึงค่า query string จาก URL ปัจจุบัน
   const urlParams = new URLSearchParams(window.location.search);
@@ -58,8 +61,11 @@
 
   } else {
   // not authorized access Image
-  document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zoHmtjKLxB8EpfPb708f-eUHEDyg8g1T";
-
+  // document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zoHmtjKLxB8EpfPb708f-eUHEDyg8g1T";
+  var img = document.getElementById("loading-spinner").querySelector("img");
+  img.src = "https://lh5.googleusercontent.com/d/1zoHmtjKLxB8EpfPb708f-eUHEDyg8g1T";
+  img.classList.remove("w-48", "h-48");
+  
   setTimeout(function () {
   liff.closeWindow();
   }, 3000); // 3000 มิลลิวินาที คือ 3 วินาที

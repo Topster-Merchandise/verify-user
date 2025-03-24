@@ -36,31 +36,21 @@
   // document.title = "User is verified";
     
   // Verified Image
-  // document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
-  // var img = document.getElementById("loading-spinner").querySelector("img");
-  // img.src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
-  // img.classList.remove("w-48", "h-48");
+  document.getElementById("loading-spinner").querySelector("img").src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
+  var img = document.getElementById("loading-spinner").querySelector("img");
+  img.src = "https://lh5.googleusercontent.com/d/1zjCLEILX4mm6fDJZc92OM7O6K1xRVvXd";
+  img.classList.remove("w-48", "h-48");
   
-    // ดึงค่า query string จาก URL ปัจจุบัน
+  // ดึงค่า query string จาก URL ปัจจุบัน
   const urlParams = new URLSearchParams(window.location.search);
   const request = urlParams.get('request');
 
   // เช็คว่าถูกเรียกจากเรื่องอะไร เพื่อส่งต่อ URL
-  // if (request === "ProductImageUpload") {
-  // // const urlRedirect = `https://tops-house-brands.github.io/product-image-upload/?userId=${profile.userId}`;
-  // const urlRedirect = `https://script.google.com/macros/s/AKfycbwHZfdtAIyq-ePBpRty_LQ14ZXPZQrxHvdRsxJkw3cl6jLn9ZmHfxnDYVsWEupwxerJxQ/exec/?userId=${profile.userId}`;
-  // setTimeout(function () {
-  // window.location.replace(urlRedirect);
-  // }, 1000);
-
   if (request === "ProductImageUpload") {
   const urlRedirect = `https://tops-house-brands.github.io/product-image-upload/?userId=${profile.userId}`;
   setTimeout(function () {
-    liff.openWindow({
-      url: urlRedirect,
-      external: true  // เปิดด้วย browser จริงนอก Line
-    });
-  }, 1000);
+  window.location.replace(urlRedirect);
+  }, 1000); 
   } else if (request === "HouseBrandsProduct") {
   const urlRedirect = `https://bit.ly/TopsHouseBrands`;
   // log(profile);

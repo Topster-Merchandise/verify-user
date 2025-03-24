@@ -47,7 +47,9 @@
 
   // เช็คว่าถูกเรียกจากเรื่องอะไร เพื่อส่งต่อ URL
   if (request === "ProductImageUpload") {
-  const urlRedirect = `https://tops-house-brands.github.io/product-image-upload/?userId=${profile.userId}`;
+  // const urlRedirect = `https://tops-house-brands.github.io/product-image-upload/?userId=${profile.userId}`;
+  const urlRedirect = `https://script.google.com/macros/s/AKfycbwHZfdtAIyq-ePBpRty_LQ14ZXPZQrxHvdRsxJkw3cl6jLn9ZmHfxnDYVsWEupwxerJxQ/exec/?userId=${profile.userId}`;
+    
   setTimeout(function () {
   window.location.replace(urlRedirect);
   }, 1000);

@@ -47,7 +47,7 @@
 
   // เช็คว่าถูกเรียกจากเรื่องอะไร เพื่อส่งต่อ URL
   if (request === "ProductImageUpload") {
-  const urlRedirect = `https://tops-house-brands.github.io/product-image-upload/?userId=${profile.userId}`;
+  const urlRedirect = `https://topster-merchandise.github.io/product-image-upload/?userId=${profile.userId}`;
   setTimeout(function () {
   window.location.replace(urlRedirect);
   }, 1000); 
@@ -108,29 +108,29 @@
     });
   }
 
-  function log(profile) {
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbytUdQQ9Iu1MWJcHyDahuBisX7pMJB4sCrL3FwhbzISYzDMffOZlXu5CYoD3O3SbQOK/exec';
-    const date = new Date();
-    const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+  // function log(profile) {
+  //   const scriptURL = 'https://script.google.com/macros/s/AKfycbytUdQQ9Iu1MWJcHyDahuBisX7pMJB4sCrL3FwhbzISYzDMffOZlXu5CYoD3O3SbQOK/exec';
+  //   const date = new Date();
+  //   const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
 
-    const obj = {
-    date: formattedDate,
-    userId: profile.userId,
-    profileName: profile.displayName,
-    userPermissions: "Access",
-    action: "House Brands Product : Click"
-    };
-    // console.log("obj : " + JSON.stringify(obj, null, 2));
+  //   const obj = {
+  //   date: formattedDate,
+  //   userId: profile.userId,
+  //   profileName: profile.displayName,
+  //   userPermissions: "Access",
+  //   action: "House Brands Product : Click"
+  //   };
+  //   // console.log("obj : " + JSON.stringify(obj, null, 2));
 
-    fetch(scriptURL, { method: 'POST', body: JSON.stringify(obj) })
-    .then((response) => response.json())
-    .then((data) => {
-    console.log("Success:", data);
-    })
-    .catch((error) => {
-    console.error("Error:", error);
-    });
-  }
+  //   fetch(scriptURL, { method: 'POST', body: JSON.stringify(obj) })
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //   console.log("Success:", data);
+  //   })
+  //   .catch((error) => {
+  //   console.error("Error:", error);
+  //   });
+  // }
 
   main();
 

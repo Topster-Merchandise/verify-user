@@ -42,25 +42,20 @@
                     return false;
                 }
 
-                // **จุดปรับปรุงหลัก:**
-                // สร้าง Map เพื่อเก็บข้อมูลผู้ใช้ ทำให้ค้นหาได้เร็วกว่าการวนลูปมาก (O(1) vs O(n))
-                // โครงสร้าง: { 'userId_1': 'Permission_1', 'userId_2': 'Permission_2', ... }
                 const userPermissions = new Map();
                 for (let i = 1; i < values.length; i++) {
                     const row = values[i];
-                    // row[1] คือ userID, row[8] คือ Permission
                     if (row && row[1]) {
                         userPermissions.set(row[1], row[8]);
                     }
                 }
 
-                // ค้นหาสิทธิ์ของผู้ใช้จาก Map ได้ทันที
                 const permission = userPermissions.get(userId);
                 return permission === "Access";
 
             } catch (error) {
                 console.error("Error fetching or processing user data:", error);
-                return false; // กรณีเกิดข้อผิดพลาด ให้ถือว่าไม่มีสิทธิ์
+                return false; 
             }
         }
 
@@ -71,11 +66,11 @@
             const img = document.getElementById("status-image");
             img.src = IMAGE_UNAUTHORIZED;
             img.classList.remove("w-48", "h-48");
-            img.classList.add("w-64", "h-auto"); // ปรับขนาดให้เหมาะสม
+            img.classList.add("w-64", "h-auto");
 
             setTimeout(() => {
                 liff.closeWindow();
-            }, 3000); // 3 วินาที
+            }, 3000);
         }
         
         /**
@@ -88,7 +83,7 @@
                 if (!liff.isLoggedIn()) {
                     const destinationUrl = window.location.href;
                     liff.login({ redirectUri: destinationUrl });
-                    return; // หยุดการทำงานหลังจากสั่ง login
+                    return; 
                 }
 
                 const profile = await liff.getProfile();
@@ -97,6 +92,7 @@
                 if (isAuthorized) {
                     const urlParams = new URLSearchParams(window.location.search);
                     const request = urlParams.get('request');
+                    const barcode = urlParams.get('barcode');
 
                     let redirectUrl = '';
 
@@ -104,19 +100,14 @@
                         case "ProductImageUpload":
                             redirectUrl = `https://topster-merchandise.github.io/product-image-upload/?userId=${profile.userId}`;
                             break;
+                        case "ProductImage":
+                            redirectUrl = `https://topster-merchandise.github.io/Product-Image/?barcode=${barcode}`;
+                            break;
                         case "FindProduct":
                             redirectUrl = `https://liff.line.me/2007107416-3rabVAAg`;
                             break;
-                        default:
-                            console.warn(`Unknown request type: ${request}`);
-                            // อาจจะ redirect ไปหน้าหลักหรือแสดงข้อความผิดพลาด
-                            handleUnauthorizedAccess();
-                            return;
                     }
                     
-                    // **จุดปรับปรุง:**
-                    // ลบ setTimeout ที่ไม่จำเป็นออก เพื่อให้ redirect ทันทีที่ตรวจสอบสิทธิ์ผ่าน
-                    // ทำให้ผู้ใช้รู้สึกว่าแอปตอบสนองเร็วขึ้น
                     window.location.replace(redirectUrl);
 
                 } else {
@@ -124,7 +115,7 @@
                 }
             } catch (error) {
                 console.error("LIFF Main Error:", error);
-                handleUnauthorizedAccess(); // กรณีเกิดข้อผิดพลาดในการทำงานหลัก
+                handleUnauthorizedAccess();
             }
         }
 

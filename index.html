@@ -93,7 +93,8 @@
                     const urlParams = new URLSearchParams(window.location.search);
                     const request = urlParams.get('request');
                     const barcode = urlParams.get('barcode');
-
+                    sessionStorage.setItem('isVerified', 'true'); // Set status isVerified สำหรับ user ที่เข้าผ่าน LIFF
+                    
                     let redirectUrl = '';
 
                     switch (request) {
